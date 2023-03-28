@@ -3,6 +3,8 @@ from RobotRaconteur.Client import *
 
 c = RRN.ConnectService('rr+tcp://localhost:60825?service=spectrometer')
 
+print(f"Device serial number: {c.device_info.serial_number}")
+
 print(c.getf_param("electric_dark").data[0])
 print(c.getf_param("integration_time").data[0])
 print(c.getf_param("scans_to_average").data[0])

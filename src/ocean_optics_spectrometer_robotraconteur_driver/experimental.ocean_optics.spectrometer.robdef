@@ -12,10 +12,15 @@ struct Spectrum
     field double[] spectrum_counts
 end
 
+struct SpectrometerInfo
+    field DeviceInfo device_info
+end
+
 object Spectrometer
     implements Device
 
     property DeviceInfo device_info [readonly,nolock]
+    property SpectrometerInfo spectrometer_info [readonly,nolock]
 
     function Spectrum capture_spectrum()
 

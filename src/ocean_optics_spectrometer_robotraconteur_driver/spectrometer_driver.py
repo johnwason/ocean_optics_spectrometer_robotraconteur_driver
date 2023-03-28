@@ -19,8 +19,9 @@ import jpype
 from pathlib import Path
 
 class SpectrometerImpl:
-    def __init__(self, device_info):
-        self.device_info = device_info
+    def __init__(self, spectrometer_info):
+        self.spectrometer_info = spectrometer_info
+        self.device_info = spectrometer_info.device_info
 
         self._spectro_wrapper = None
         self._spectro_device_number = 0
@@ -40,6 +41,9 @@ class SpectrometerImpl:
                 return
         assert False, f"Could not find spectrometer. Detected {num_spectro} spectrometers"
             
+
+    def _get_device_serial_number(self):
+        return str(self._spectro_wrapper.getSerialNumber(self._spectro_device_number))
 
     def capture_spectrum(self):
         ret = self._spectrum_type()
@@ -99,6 +103,7 @@ def _list_spectrometers():
 def main():
     parser = argparse.ArgumentParser(description="Ocean Optics Spectrometer Robot Raconteur Driver")
 
+    parser.add_argument("--spectrometer-info-file", type=argparse.FileType('r'),default=None,required=True,help="Spectrometer info file (required)")
     parser.add_argument("--device-serial-number", type=str,default=None,required=False,help="Device serial number (optional)")
     parser.add_argument("--wait-signal",action='store_const',const=True,default=False, help="wait for SIGTERM or SIGINT (Linux only)")
     parser.add_argument("--list-spectrometers",action='store_true',default=False,help="List available spectrometers and exit")
@@ -116,17 +121,27 @@ def main():
 
     _start_jvm()
 
-    spectrometer = SpectrometerImpl(None)
 
+    with args.spectrometer_info_file:
+        spectrometer_info_text = args.spectrometer_info_file.read()
+
+    info_loader = InfoFileLoader(RRN)
+    spectrometer_info, spectrometer_ident_fd = info_loader.LoadInfoFileFromString(spectrometer_info_text, \
+                                            "experimental.ocean_optics.spectrometer.SpectrometerInfo", "device")
+    
+    spectrometer = SpectrometerImpl(spectrometer_info)
     spectrometer._open_spectrometer(args.device_serial_number)
 
+    spectrometer_info.device_info.serial_number = spectrometer._get_device_serial_number()
+
+    attributes_util = AttributesUtil(RRN)
+    spectrometer_attributes = attributes_util.GetDefaultServiceAttributesFromDeviceInfo(spectrometer_info.device_info)
     
     with RR.ServerNodeSetup("ocean_optics.spectrometer",60825):
 
         service_ctx = RRN.RegisterService("spectrometer","experimental.ocean_optics.spectrometer.Spectrometer",spectrometer)
-        # service_ctx.SetServiceAttributes(welder_attributes)
-        # welder._start()
-
+        service_ctx.SetServiceAttributes(spectrometer_attributes)
+        
         if args.wait_signal:  
             #Wait for shutdown signal if running in service mode          
             print("Press Ctrl-C to quit...")

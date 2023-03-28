@@ -1,0 +1,18 @@
+device_info:
+  device:
+    name: ocean_optics_spectrometer
+  manufacturer:
+    name: ocean_optics
+    uuid: f3da73fc-4d71-4fcb-86a7-9424622ddc70
+  model:
+    name: HR4000CG_UV_NIR
+    uuid: dc16e5f2-8fe5-4021-ab89-180ccb3ebc30
+  serial_number: 123467899
+  device_classes:
+    - class_identifier:
+        name: spectrometer
+        uuid: f3f43068-6c82-491e-8953-3060f8e97124
+      subclasses:
+        - spectrometer
+  implemented_types:
+    - experimental.ocean_optics.spectrometer.Spectrometer  
