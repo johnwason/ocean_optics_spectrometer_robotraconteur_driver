@@ -1,0 +1,27 @@
+[project]
+
+name= "ocean-optics-spectrometer-robotraconteur-driver"
+version = "0.0.1"
+description = "Ocean Optics Spectromoter Robot Raconteur Driver using OmniDriver"
+requires-python = ">=3.6"
+license = {file = "LICENSE.txt"}
+authors = [
+    {name = "John Wason", email = "wason@wasontech.com"}
+]
+
+dependencies = [
+    'RobotRaconteur',
+    'RobotRaconteurCompanion',
+    'numpy',
+    'jpype1'
+]
+
+[build-system]
+build-backend = 'setuptools.build_meta'
+requires = [
+    'setuptools',
+    'toml',
+]
+
+[project.scripts]
+ocean-optics-spectrometer-robotraconteur-driver = "ocean_optics_spectrometer_robotraconteur_driver.spectrometer_driver:main"

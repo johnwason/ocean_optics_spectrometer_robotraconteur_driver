@@ -1,0 +1,24 @@
+service experimental.ocean_optics.spectrometer
+
+stdver 0.10
+
+import com.robotraconteur.device
+
+using com.robotraconteur.device.DeviceInfo
+using com.robotraconteur.device.Device
+
+struct Spectrum
+    field double[] wavelengths
+    field double[] spectrum_counts
+end
+
+object Spectrometer
+    implements Device
+
+    property DeviceInfo device_info [readonly,nolock]
+
+    function Spectrum capture_spectrum()
+
+    function varvalue getf_param(string param_name)
+    function void setf_param(string param_name, varvalue value)
+end
