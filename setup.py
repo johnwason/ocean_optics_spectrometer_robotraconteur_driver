@@ -5,7 +5,7 @@ setup(
     packages=find_namespace_packages(where='src'),
     include_package_data=True,
     package_data = {
-        'fronius_robotraconteur_driver': ['*.robdef'],
+        'ocean_optics_spectrometer_robotraconteur_driver': ['*.robdef'],
     },
     zip_safe=False
 )
